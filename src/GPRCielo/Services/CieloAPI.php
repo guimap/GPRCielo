@@ -26,10 +26,7 @@ use Zend\Form\View\Helper\Form;
 
 class CieloAPI
 {
-    /**
-     * @var Estabelecimento
-     */
-    private $estabelecimento;
+
     private $portador;
     private $pedido;
     private $formaPagamento;
@@ -96,7 +93,6 @@ class CieloAPI
 //            echo "<textarea>";
 //            echo $xml;
 //            echo "</textarea>";
-//
 //            die;
 
             //Faço a requisição para o webservice
@@ -203,5 +199,90 @@ class CieloAPI
             $out[$index] = ( is_object ( $node ) ) ? $this->toArray( $node ) : $node;
 
         return $out;
+    }
+
+    /**
+     * @var Estabelecimento
+     */
+    private $estabelecimento;
+
+    /**
+     * @return Estabelecimento
+     */
+    public function getEstabelecimento()
+    {
+        return $this->estabelecimento;
+    }
+
+    /**
+     * @param Estabelecimento $estabelecimento
+     */
+    public function setEstabelecimento($estabelecimento)
+    {
+        $this->estabelecimento = $estabelecimento;
+    }
+
+    /**
+     * @return Portador
+     */
+    public function getPortador()
+    {
+        return $this->portador;
+    }
+
+    /**
+     * @param Portador $portador
+     */
+    public function setPortador($portador)
+    {
+        $this->portador = $portador;
+    }
+
+    /**
+     * @return Pedido
+     */
+    public function getPedido()
+    {
+        return $this->pedido;
+    }
+
+    /**
+     * @param Pedido $pedido
+     */
+    public function setPedido($pedido)
+    {
+        $this->pedido = $pedido;
+    }
+
+    /**
+     * @return FormaPagamento
+     */
+    public function getFormaPagamento()
+    {
+        return $this->formaPagamento;
+    }
+
+    /**
+     * @param FormaPagamento $formaPagamento
+     */
+    public function setFormaPagamento($formaPagamento)
+    {
+        $this->formaPagamento = $formaPagamento;
+    }
+
+    /**
+     * @return Endereco
+     */
+    public function getEndereco()
+    {
+        return $this->endereco;
+    }
+
+    /**
+     * @param Endereco $endereco
+     */
+    public function setEndereco($endereco)
+    {
+        $this->endereco = $endereco;
     }
 }
