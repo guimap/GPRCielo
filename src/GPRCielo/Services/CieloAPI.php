@@ -95,6 +95,7 @@ class CieloAPI
 //            echo "</textarea>";
 //            die;
 
+
             //Faço a requisição para o webservice
             $xmlObj = $this->makeRequest($xml);
 

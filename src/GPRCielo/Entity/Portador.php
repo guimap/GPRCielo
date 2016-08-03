@@ -54,7 +54,7 @@ class Portador extends EntityBase
     public function __construct()
     {
         $this->numero           = "";
-        $this->validade         = "";
+        $this->validade         = new \DateTime("now");
         $this->indicador        = "";
         $this->codigoSeguranca  = "";
         $this->nome             = "";
@@ -247,6 +247,10 @@ class Portador extends EntityBase
     {
         $this->cpf = $cpf;
         return $this;
+    }
+
+    public function getValidade(){
+        return $this->getAnoValidadeCartao().$this->getMesValidadeCartao();
     }
 
 
