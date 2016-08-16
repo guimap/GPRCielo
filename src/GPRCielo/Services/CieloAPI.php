@@ -31,7 +31,9 @@ class CieloAPI
     private $pedido;
     private $formaPagamento;
     private $endereco;
-    private $url = 'https://qaseCommerce.cielo.com.br/servicos/ecommwsec.do';
+    private $url = 'https://ecommerce.cielo.com.br/servicos/ecommwsec.do';
+    
+    // private $url = 'https://qasecommerce.cielo.com.br/servicos/ecommwsec.do';
 
     /**
      * @var Cielo
@@ -89,11 +91,11 @@ class CieloAPI
                 $token = urlencode($token);
                 $xml = $this->build->makeXMLTransacaoWithToken($token,$captura);
             }
-//            header("Content-Type: xml");
-//            echo "<textarea>";
-//            echo $xml;
-//            echo "</textarea>";
-//            die;
+        //    header("Content-Type: xml");
+        //    echo "<textarea>";
+        //    echo $xml;
+        //    echo "</textarea>";
+        //    die;
 
 
             //Faço a requisição para o webservice
@@ -174,7 +176,7 @@ class CieloAPI
         $string = curl_exec($ch);
 
         curl_close($ch);
-
+        $string = utf8_encode($string);
         $xml = simplexml_load_string($string);
 
         //Verifica se Possui algum erro no xml
