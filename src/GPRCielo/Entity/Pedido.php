@@ -75,6 +75,7 @@ class Pedido extends EntityBase
     }
 
     /**
+     * @desc set type of moeda, Default is 986 (BRL)
      * @param mixed $moeda
      */
     public function setMoeda($moeda)

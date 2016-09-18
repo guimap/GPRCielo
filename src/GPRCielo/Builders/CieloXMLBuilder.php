@@ -159,5 +159,21 @@ class CieloXMLBuilder
 
     }
 
+    public function makeXMLCancelamento( $pedido, $tid){
+        $this->cleanXML();
+
+        $this->stringXML .= "<requisicao-cancelamento id=\"39d36eb6-5ae9-4308-89a1-455d299460c0\" versao=\"1.3.0\">";
+        $this->stringXML .= "<tid>".$tid."</tid>";
+        $this->stringXML .= $this->estabelecimento->toXML();
+        $this->stringXML .= "<valor>".$pedido->getValor()."</valor>";
+
+        $this->stringXML .= "</requisicao-cancelamento>";
+
+
+
+        return $this->stringXML;
+
+    }
+
 
 }

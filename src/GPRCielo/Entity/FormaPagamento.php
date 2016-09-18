@@ -51,9 +51,10 @@ class FormaPagamento extends EntityBase
     }
 
     /**
-     * @param Produto $prod
+     * @desc Código do produto: 1 – Crédito à Vista, 2 – Parcelado loja, A – Débito, defaul is 1
+     * @param  $prod
      * @return $this
-     * @internal param mixed $produto
+     * @internal param Produto $produto
      */
     public function setProduto($prod)
     {

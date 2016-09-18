@@ -46,14 +46,24 @@ class CieloAPI
      */
     private $build;
 
-    public function __construct($estabelecimento,
+    /**
+     * @desc CieloAPI constructor.
+     * @param Estabelecimento $estabelecimento
+     * @param Portador $portador
+     * @param Pedido $pedido
+     * @param FormaPagamento $formaPagamento
+     * @param Endereco $endereco
+     * @param URLCielo $url
+     */
+    public function __construct(Estabelecimento $estabelecimento,
                                 Portador $portador,
                                 Pedido $pedido,
                                 FormaPagamento $formaPagamento,
                                 Endereco$endereco,
-                                URLCielo $url = URLCielo::PRODUCTION
+                                $url = URLCielo::PRODUCTION
                                 )
     {
+
         $this->estabelecimento = $estabelecimento;
         $this->portador = $portador;
         $this->pedido = $pedido;
@@ -98,22 +108,27 @@ class CieloAPI
                 $xml = $this->build->makeXMLTransacaoWithToken($token,$captura);
             }
 
+            if($this->isDebug){
+//                header("Content-Type: xml");
+//                echo "<textarea>";
+//                echo $xml;
+//                echo "</textarea>";
 
+//
+//                die;
+            }
 
 
             //Faço a requisição para o webservice
+            //Da pau somente quando eu passo a varivel, se eu fizer assim
+            /* =>  $xmlObj = $this->makeRequest('<?xml version="1.0"?><requisicao-transacao id="a97ab62a-7956-41ea-b03f-c2e9f612c293" versao="1.2.1" > <dados-ec><numero>1006993069</numero><chave>25fbb99741c739dd84d7b06ec78c9bac718838630f30b112d033ce2e621b34f3</chave></dados-ec> <dados-portador><numero>4012001037141112</numero><validade>201805</validade><indicador>1</indicador><codigo-seguranca>123</codigo-seguranca></dados-portador> <dados-pedido><numero>57c71f074d4cf</numero><valor>9400</valor><moeda>986</moeda><data-hora>2016-08-31T15:16:39</data-hora><descricao>Contrata%C3%A7%C3%A3o+de+servi%C3%A7o+de+limpeza+b%C3%A1sica</descricao><idioma>PT</idioma></dados-pedido> <forma-pagamento><bandeira>visa</bandeira><produto>1</produto><parcelas>1</parcelas></forma-pagamento> <url-retorno>http://localhost:8080</url-retorno><autorizar>3</autorizar><capturar>true</capturar><gerar-token>true</gerar-token><avs><![CDATA[ <dados-avs> <endereco></endereco> <complemento></complemento> <numero></numero> <bairro></bairro> <cep></cep> <cpf></cpf> </dados-avs> ]]></avs></requisicao-transacao>');*/
+
             $xmlObj = $this->makeRequest($xml);
 
             if($this->isDebug){
-//                    header("Content-Type: xml");
-                echo "<textarea>";
-                echo $xml;
-                echo "</textarea>";
-
                 echo "<pre>";
                 var_dump($xmlObj);
                 echo "</pre>";
-                //    die;
             }
 
             return [
@@ -125,7 +140,7 @@ class CieloAPI
             ];
 
         }catch(\Exception $e){
-
+            die($e->getMessage());
             throw $e;
         }
 
@@ -167,50 +182,52 @@ class CieloAPI
         }catch (\Exception $e){
             throw $e;
         }
+    }
 
+    public function cancelar($tid,$pedido){
+        try{
+            $xmlString = $this->build->makeXMLCancelamento($pedido,$tid);
+            $retorno = $this->makeRequest($xmlString);
 
+            return $retorno;
+        }catch (\Exception $e){
+            throw $e;
+        }
     }
 
 
     public function makeRequest($xmlStr){
-
+        $xmlStr = preg_replace( "/\r|\n/", "", $xmlStr);
         $headers = [];
         $headers[] = "Content-Type: application/x-www-form-urlencoded";
         $ch = curl_init();
-
         curl_setopt($ch, CURLOPT_POST, 1);
         curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
-        curl_setopt($ch, CURLOPT_POSTFIELDS,  'mensagem=' . $xmlStr);
+        curl_setopt($ch, CURLOPT_POSTFIELDS,  "mensagem=".$xmlStr);
+
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_URL, $this->url);
 //        curl_setopt($ch, CURLOPT_SSLVERSION, 3);
 //        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+
         curl_setopt($ch, CURLOPT_FAILONERROR, true);
         curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 10);
-
         curl_setopt($ch, CURLOPT_TIMEOUT, 30);
-
         curl_setopt($ch, CURLOPT_VERBOSE, false);
-
         $string = curl_exec($ch);
-
+        $d = curl_getinfo($ch);
         curl_close($ch);
+
         $string = utf8_encode($string);
         $xml = simplexml_load_string($string);
-
         //Verifica se Possui algum erro no xml
         $regex = "/<erro/i";
         preg_match($regex,$string,$match);
-
-
         if( count($match) > 0 ){
             $msg = "[".$xml->codigo."] ".$xml->mensagem;
             throw new \Exception($msg);
         }
-
-
         $arr = $this->toArray($xml);
-
         return $arr;
     }
 

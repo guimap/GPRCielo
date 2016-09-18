@@ -26,10 +26,17 @@ class Estabelecimento extends EntityBase
 
     /**
      * @param mixed $chave
+     * @deprecated
+     * @desc It's depreceated, use setEstabelecimento insted of setChave
      */
     public function setChave($chave)
     {
         $this->chave = $chave;
+        return $this;
+    }
+
+    public function setEstabelecimento($estab) {
+        $this->chave = $estab;
         return $this;
     }
 
