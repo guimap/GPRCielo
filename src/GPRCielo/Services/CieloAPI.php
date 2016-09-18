@@ -20,6 +20,7 @@ use GPRCielo\Entity\FormaPagamento;
 use GPRCielo\Entity\Helpers\Autorizacao;
 use GPRCielo\Entity\Helpers\ErrorsAuthorization;
 use GPRCielo\Entity\Helpers\StatusTransacao;
+use GPRCielo\Entity\Helpers\URLCielo;
 use GPRCielo\Entity\Pedido;
 use GPRCielo\Entity\Portador;
 use Zend\Form\View\Helper\Form;
@@ -31,9 +32,9 @@ class CieloAPI
     private $pedido;
     private $formaPagamento;
     private $endereco;
-    private $url = 'https://ecommerce.cielo.com.br/servicos/ecommwsec.do';
-    
-    // private $url = 'https://qasecommerce.cielo.com.br/servicos/ecommwsec.do';
+    private $url;
+
+    private $isDebug;
 
     /**
      * @var Cielo
@@ -49,13 +50,18 @@ class CieloAPI
                                 Portador $portador,
                                 Pedido $pedido,
                                 FormaPagamento $formaPagamento,
-                                Endereco$endereco)
+                                Endereco$endereco,
+                                URLCielo $url = URLCielo::PRODUCTION
+                                )
     {
         $this->estabelecimento = $estabelecimento;
         $this->portador = $portador;
         $this->pedido = $pedido;
         $this->formaPagamento = $formaPagamento;
         $this->endereco = $endereco;
+        $this->url = $url;
+
+        $this->isDebug = false;
 
         //Crio o builder de XML da CIELO
         $this->build = new CieloXMLBuilder(
@@ -91,18 +97,24 @@ class CieloAPI
                 $token = urlencode($token);
                 $xml = $this->build->makeXMLTransacaoWithToken($token,$captura);
             }
-        //    header("Content-Type: xml");
-        //    echo "<textarea>";
-        //    echo $xml;
-        //    echo "</textarea>";
-        //    die;
+
+
 
 
             //Faço a requisição para o webservice
             $xmlObj = $this->makeRequest($xml);
 
+            if($this->isDebug){
+//                    header("Content-Type: xml");
+                echo "<textarea>";
+                echo $xml;
+                echo "</textarea>";
 
-            return $xmlObj;
+                echo "<pre>";
+                var_dump($xmlObj);
+                echo "</pre>";
+                //    die;
+            }
 
             return [
                 "tid"           => $xmlObj['tid'],
@@ -119,6 +131,13 @@ class CieloAPI
 
     }
 
+    /**
+     * @desc Define if the output of request should be printed
+     * @param $isDegug
+     */
+    public function setDebug($isDegug){
+        $this->isDebug = $isDegug;
+    }
 
     public function consulta($tid){
         try{
