@@ -154,7 +154,7 @@ class CieloAPI
 
 
     public function makeRequest($xmlStr){
-
+        $xmlStr = preg_replace( "/\r|\n/", "", $xmlStr);
         $headers = [];
         $headers[] = "Content-Type: application/x-www-form-urlencoded";
         $ch = curl_init();
