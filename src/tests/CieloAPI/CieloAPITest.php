@@ -194,6 +194,9 @@ class CieloAPITest extends PHPUnit
 
     }
 
+    //TODO Fazer Teste para cobrar e cancelar parcial do valor
+    
+
 
 
 
