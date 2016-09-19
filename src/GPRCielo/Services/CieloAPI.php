@@ -74,13 +74,7 @@ class CieloAPI
         $this->isDebug = false;
 
         //Crio o builder de XML da CIELO
-        $this->build = new CieloXMLBuilder(
-            $this->estabelecimento,
-            $this->portador,
-            $this->pedido,
-            $this->formaPagamento,
-            $this->endereco,
-            Autorizacao::AUTHORIZE_WITHOUT_AUTHENTICATION );
+        $this->buildXML();
 
 
 
@@ -140,7 +134,6 @@ class CieloAPI
             ];
 
         }catch(\Exception $e){
-            die($e->getMessage());
             throw $e;
         }
 
@@ -259,6 +252,7 @@ class CieloAPI
     public function setEstabelecimento($estabelecimento)
     {
         $this->estabelecimento = $estabelecimento;
+        $this->buildXML();
     }
 
     /**
@@ -275,6 +269,7 @@ class CieloAPI
     public function setPortador($portador)
     {
         $this->portador = $portador;
+        $this->buildXML();
     }
 
     /**
@@ -291,6 +286,7 @@ class CieloAPI
     public function setPedido($pedido)
     {
         $this->pedido = $pedido;
+        $this->buildXML();
     }
 
     /**
@@ -307,6 +303,7 @@ class CieloAPI
     public function setFormaPagamento($formaPagamento)
     {
         $this->formaPagamento = $formaPagamento;
+        $this->buildXML();
     }
 
     /**
@@ -323,5 +320,19 @@ class CieloAPI
     public function setEndereco($endereco)
     {
         $this->endereco = $endereco;
+        $this->buildXML();
+    }
+
+    /**
+     * @desc função que monta o builder de xml de acordo com as informações passadas.
+     */
+    private function buildXML(){
+        $this->build = new CieloXMLBuilder(
+            $this->estabelecimento,
+            $this->portador,
+            $this->pedido,
+            $this->formaPagamento,
+            $this->endereco,
+            Autorizacao::AUTHORIZE_WITHOUT_AUTHENTICATION );
     }
 }

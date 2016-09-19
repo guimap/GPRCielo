@@ -70,6 +70,16 @@ class CieloAPITest extends PHPUnit
         );
     }
 
+
+    public function buildPedido(){
+        $pedido = new Pedido();
+        $pedido->setDescricao("Nosso Pedido Teste");
+        $pedido->setValor(1.00);
+
+        return $pedido;
+
+    }
+
     /**
      * @author Guilherme
      *
@@ -126,4 +136,65 @@ class CieloAPITest extends PHPUnit
             $this->assertArrayHasKey('status',$json);
         }
     }
+
+    public function testCompraParcelada(){
+        $formaPagamento = new FormaPagamento();
+        $formaPagamento
+            ->setProduto(Produto::PARCELADO)
+            ->setBandeira(Bandeira::VISA)
+            ->setParcelas(2);
+        $this->cieloAPI->setFormaPagamento($formaPagamento);
+
+
+        $pedido = new Pedido();
+        $pedido->setValor(1.00);
+
+
+        $r = $this->cieloAPI->transacao();
+        $r = $this->cieloAPI->consulta($r['tid']);
+
+        if(isset($r['forma-pagamento']) ){
+            if(isset($r['forma-pagamento']['produto'])){
+                $this->assertEquals(Produto::PARCELADO,$r['forma-pagamento']['produto']);
+            }else {
+                $this->assertArrayHasKey('produto',$r['forma-pagamento']);
+            }
+        }else {
+            $this->assertArrayHasKey('forma-pagamento',$r);
+        }
+
+    }
+
+    /**
+     * @expectedException \Exception
+     */
+    public function testCompraParceladaAVista(){
+
+            $formaPagamento = new FormaPagamento();
+            $formaPagamento
+                ->setProduto(Produto::CREDITOVISTA  )
+                ->setBandeira(Bandeira::VISA)
+                ->setParcelas(2);
+            $this->cieloAPI->setFormaPagamento($formaPagamento);
+
+
+            $r = $this->cieloAPI->transacao();
+
+    }
+
+    /**
+     * @expectedException \Exception
+     */
+    public function testInstanceCieloSemEstabelecimento(){
+
+        $e = new Estabelecimento();
+        $this->cieloAPI->setEstabelecimento($e);
+
+        $this->cieloAPI->transacao();
+
+    }
+
+
+
+
 }

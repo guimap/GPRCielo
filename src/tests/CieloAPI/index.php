@@ -26,8 +26,8 @@ require "../autoload.php";
 
     $forma = new \GPRCielo\Entity\FormaPagamento();
     $forma->setBandeira(\GPRCielo\Entity\Helpers\Bandeira::VISA)
-        ->setParcelas(1)
-        ->setProduto(\GPRCielo\Entity\Helpers\Produto::CREDITOVISTA);
+        ->setParcelas(2)
+        ->setProduto(\GPRCielo\Entity\Helpers\Produto::PARCELADO);
 
     $endereco = new \GPRCielo\Entity\Endereco($portador);
 
@@ -48,8 +48,9 @@ require "../autoload.php";
 //    $cieloAPI->setDebug(true);
 
     $json = $cieloAPI->transacao();
-    $json = $cieloAPI->consulta('10069930690007E69B6A');
-    $json = $cieloAPI->cobrar($pedido,'10069930690007E69B6A');
+    $json = $cieloAPI->consulta($json['tid']);
+//    $json = $cieloAPI->consulta('10069930690007E719BA');
+//    $json = $cieloAPI->cobrar($pedido,'10069930690007E69B6A');
 //    $json = $cieloAPI->cancelar('10069930690007E6937A',$pedido);
 //    $json = $cieloAPI->consulta('10069930690007E6937A');
 
